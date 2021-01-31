@@ -17,6 +17,7 @@ namespace game_of_life
         private bool[,] field;
         private int rows;
         private int columns;
+        private int currentGeneration = 0;
 
         public Form1()
         {
@@ -27,6 +28,9 @@ namespace game_of_life
         {
             if (timer1.Enabled)
                 return;
+
+            currentGeneration = 0;
+            Text = $"Generation {currentGeneration}";
 
             numericUpDown1.Enabled = false;
             numericUpDown2.Enabled = false;
@@ -97,6 +101,8 @@ namespace game_of_life
             }*/
 
             pictureBox1.Refresh();
+
+            Text = $"Generation {++currentGeneration}";  //++A increments
         }
 
         private int CountNeighbor(int x, int y)
@@ -122,7 +128,6 @@ namespace game_of_life
                         count++;
                     }
                 }
-
             }
 
             return count;
@@ -157,6 +162,71 @@ namespace game_of_life
         private void button2_Click(object sender, EventArgs e)
         {
             StopGame();
+        }
+
+        private void pictureBox1_MouseDown(object sender, MouseEventArgs e)     //instead of using pictureBox1_MouseMove alone
+        {
+            if (!timer1.Enabled)
+                return;
+
+            if (e.Button == MouseButtons.Left)
+            {
+                var x = e.Location.X / resolution;
+                var y = e.Location.Y / resolution;
+
+                var valid = ValidateMounsePosition(x, y);
+                if (valid)
+                {
+                    field[x, y] = true;
+                }
+            }
+
+            if (e.Button == MouseButtons.Right)
+            {
+                var x = e.Location.X / resolution;
+                var y = e.Location.Y / resolution;
+
+                var valid = ValidateMounsePosition(x, y);
+                if (valid)
+                {
+                    field[x, y] = false;
+                }
+            }
+        }
+
+        private void pictureBox1_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (!timer1.Enabled)
+                return;
+
+            if (e.Button == MouseButtons.Left)
+            {
+                var x = e.Location.X / resolution;
+                var y = e.Location.Y / resolution;
+
+                var valid = ValidateMounsePosition(x, y);
+                if (valid)
+                {
+                    field[x, y] = true;
+                }
+            }
+
+            if (e.Button == MouseButtons.Right)
+            {
+                var x = e.Location.X / resolution;
+                var y = e.Location.Y / resolution;
+
+                var valid = ValidateMounsePosition(x, y);
+                if (valid)
+                {
+                    field[x, y] = false;
+                }
+            }
+        }
+
+        private bool ValidateMounsePosition(int x, int y)
+        {
+            return x >= 0 && y >= 0 && x < columns && y < rows;
         }
     }
 }
