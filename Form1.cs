@@ -24,7 +24,7 @@ namespace game_of_life
         }
 
         public void StartGame()
-        { 
+        {
             if (timer1.Enabled)
                 return;
 
@@ -37,7 +37,7 @@ namespace game_of_life
             rows = pictureBox1.Height / resolution;
             columns = pictureBox1.Width / resolution;
             field = new bool[columns, rows];
-            
+
             Random random = new Random();
             for (int x = 0; x < columns; x++)
             {
@@ -56,16 +56,36 @@ namespace game_of_life
         {
             graphics.Clear(Color.Black);
 
+            var newField = new bool[columns, rows];
+
             for (int x = 0; x < columns; x++)
             {
                 for (int y = 0; y < rows; y++)
                 {
-                    if (field[x, y])
+                    var neighborCount = CountNeighbor(x, y);
+                    var neighborAlive = field[x, y];
+
+                    if (!neighborAlive && neighborCount == 3)
+                    {
+                        newField[x, y] = true;  //new live
+                    }
+                    else if (neighborAlive && (neighborCount < 2 || neighborCount > 3))
+                    {
+                        newField[x, y] = false;  //death
+                    }
+                    else
+                    {
+                        newField[x, y] = field[x, y];  //life continues
+                    }
+
+                    if (neighborAlive)    //replaced (field[x, y]) with neighborAlive
                     {
                         graphics.FillRectangle(Brushes.Crimson, x * resolution, y * resolution, resolution, resolution);
                     }
                 }
             }
+
+            field = newField;
 
             /*Random random = new Random();
             for (int x = 0; x < columns; x++)
@@ -79,9 +99,33 @@ namespace game_of_life
             pictureBox1.Refresh();
         }
 
-        private int CountNeighbor(int x, int y) 
+        private int CountNeighbor(int x, int y)
         {
-            return 0;
+            int count = 0;
+
+            for (int i = -1; i < 2; i++)
+            {
+                for (int j = -1; j < 2; j++)
+                {
+                    //modified to (x + i + columns) % columns to get outside screen boundaries
+
+                    int lcolumn = (x + i + columns) % columns;    //local columns and rows + global columns and rows
+                    int lrow = (y + j + rows) % rows;
+                    bool isSelfCheck = lcolumn == x && lrow == y;   //remove center from count
+
+                    //all int and bool can be changed to var
+
+                    bool neighborAlive = field[lcolumn, lrow];
+
+                    if (neighborAlive && !isSelfCheck)
+                    {
+                        count++;
+                    }
+                }
+
+            }
+
+            return count;
         }
 
         private void StopGame()
