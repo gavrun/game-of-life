@@ -18,7 +18,7 @@ namespace game_of_life
         private int rows;
         private int columns;
 
-        public StartGame()
+        public void StartGame()
         { if (timer1.Enabled)
                 return;
 
@@ -60,7 +60,7 @@ namespace game_of_life
             //pictureBox1.Image = new Bitmap(pictureBox1.Width, pictureBox1.Height);
             //graphics = Graphics.FromImage(pictureBox1.Image);
             //graphics.FillRectangle(Brushes.Crimson, 0, 0, resolution, resolution);
-            
+            StartGame();
         }
 
         private void button2_Click(object sender, EventArgs e)
